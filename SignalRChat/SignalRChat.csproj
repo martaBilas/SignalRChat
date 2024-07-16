@@ -17,6 +17,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataContext\DataContext.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

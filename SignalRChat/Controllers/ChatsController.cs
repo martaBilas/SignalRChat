@@ -1,4 +1,6 @@
 ﻿using ChatTest.Hubs;
+using Domain;
+using Infrastructure.Exceptions;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,15 +15,17 @@ namespace SignalRChat.Controllers
     {
         private readonly IHubContext<ChatHub> _hubContext;
         private readonly IChatService _chatService;
+        private readonly IUserService _userService;
 
-        public ChatsController(IHubContext<ChatHub> hubContext, IChatService chatService)
+        public ChatsController(IHubContext<ChatHub> hubContext, IChatService chatService, IUserService userService)
         {
             _hubContext = hubContext;
             _chatService = chatService;
+            _userService = userService;
         }
 
         [HttpPost("SendMessage")]
-        public async Task<IActionResult> SendMessage([FromBody] MessageModel model)
+        public async Task<IActionResult> SendMessage([FromBody] MessageTestModel model)
         {
             if (string.IsNullOrEmpty(model.Message))
             {
@@ -31,16 +35,32 @@ namespace SignalRChat.Controllers
 
             return Ok();
         }
+        //[HttpGet("{id}")]
+        //public string Get(int id)
+        //{
+        //    return "value";
+        //}
 
-        // GET api/<ChatsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("SearchChatsByName")]
+        public IActionResult SearchChatsByName([FromQuery] int userId, [FromQuery] string chatName)
         {
-            return "value";
+            try
+            {
+                var chats = _chatService.SearchChatsByName(userId, chatName);
+                if (chats == null || !chats.Any())
+                {
+                    return NotFound(new { Message = "No chats found for the given search criteria." });
+                }
+                return Ok(chats);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Error = "An error occurred while searching chats.", Details = ex.Message });
+            }
         }
 
 
-        [HttpPost("CreateChat")]
+        [HttpPost("CreateNewChat")]
         public IActionResult CreateChat([FromBody] CreateChatModel newChatModel)
         {
             //if (!ModelState.IsValid)
@@ -52,9 +72,14 @@ namespace SignalRChat.Controllers
 
             //    return BadRequest(new { Errors = errors });
             //}
+            if (!_userService.IsUserExist(newChatModel.CreatorId))
+            {
+                return NotFound($"User with ID {newChatModel.CreatorId} not found.");
+            }
+
             try
             {
-                _chatService.CreateRoom(newChatModel.CreatorId, newChatModel.Name);
+                _chatService.CreateNewChat(newChatModel.CreatorId, newChatModel.Name);
                 return Ok("Chat is created");
             }
             catch (Exception ex)
@@ -63,12 +88,57 @@ namespace SignalRChat.Controllers
             }
         }
 
-            // PUT api/<ChatsController>/5
-            [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPost("AddUsersToChat")]
+        public IActionResult AddUsersToChat(AddUsersToChatModel model)
         {
+            if (!_chatService.IsChatExist(model.ChatId))
+                return NotFound(new { Message = "There is no chat with such id" });
+
+            if (!_userService.CheckIsUserCreator(model.CreatorId, model.ChatId))
+                throw new NotCreatorException();
+
+            foreach (var userId in model.UsersToAddIds)
+            {
+                if (!_userService.IsUserExist(userId))
+                {
+                    return NotFound($"User with ID {userId} not found.");
+                }
+            }
+
+            foreach (var userId in model.UsersToAddIds)
+            {
+                if (_userService.IsUserInChat(userId, model.ChatId))
+                {
+                    throw new UserIsAddedException($"User with ID {userId} is already added to this chat.");
+                }
+            }
+
+            try
+            {
+                _chatService.AddUsersToChat(model.UsersToAddIds, model.ChatId);
+                return Ok("Users added to chat");
+            }
+            catch (Exception ex) { 
+                return StatusCode(500, new { Error = "An error occurred while adding users to the chat room.", Details = ex.Message }); 
+            }
         }
 
-   
+        [HttpDelete("DeleteChat")]
+        public IActionResult DeleteChat(DeleteChatModel model) {
+            if (!_chatService.IsChatExist(model.ChatId))
+                return NotFound(new { Message = "There is no chat with such id" });
+
+            if (!_userService.CheckIsUserCreator(model.CreatorId, model.ChatId))
+                throw new NotCreatorException();
+            try
+            {
+                return Ok("Chat is deleted");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Error = "An error occurred while deleting the chat room.", Details = ex.Message });
+            }
+        }
     }
 }

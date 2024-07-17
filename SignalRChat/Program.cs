@@ -33,6 +33,7 @@ builder.Services.AddDbContext<ChatDataContext>(options =>
         b => b.MigrationsAssembly("DataContext")));
 
 builder.Services.AddScoped<IChatService,ChatService>();
+builder.Services.AddScoped<IUserService,UserService>();
 
 var app = builder.Build();
 

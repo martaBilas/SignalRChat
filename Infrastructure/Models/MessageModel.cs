@@ -2,6 +2,8 @@
 
 public class MessageModel
 {
-    public string User { get; set; }
-    public string Message { get; set; }
+    public int Id { get; set; }
+    public string? Content { get; set; }
+    public UserModel? User { get; set; }
+
 }

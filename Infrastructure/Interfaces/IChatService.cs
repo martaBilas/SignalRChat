@@ -1,7 +1,13 @@
-﻿namespace Infrastructure.Interfaces
+﻿using Domain;
+using Infrastructure.Models;
+
+namespace Infrastructure.Interfaces
 {
     public interface IChatService
     {
-        void CreateRoom(int creatorId, string roomName);
+        void AddUsersToChat(ICollection<int> usersToAddIds, int chatId);
+        void CreateNewChat(int creatorId, string roomName);
+        bool IsChatExist(int chatId);
+        IList<ChatModel> SearchChatsByName(int userId, string searchTerm);
     }
 }

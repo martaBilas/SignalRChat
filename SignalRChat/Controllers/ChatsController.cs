@@ -13,7 +13,7 @@ namespace SignalRChat.Controllers
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
 
-        public ChatsController( IChatService chatService, IUserService userService)
+        public ChatsController(IChatService chatService, IUserService userService)
         {
             _chatService = chatService;
             _userService = userService;
@@ -22,40 +22,31 @@ namespace SignalRChat.Controllers
         [HttpGet("SearchChatsByName")]
         public IActionResult SearchChatsByName([FromQuery] int userId, [FromQuery] string chatName)
         {
-            try
+            if (!_userService.IsUserExist(userId))
             {
-                var chats = _chatService.SearchChatsByName(userId, chatName);
-                if (chats == null || !chats.Any())
-                {
-                    return NotFound(new { Message = "No chats found for the given search criteria." });
-                }
-                return Ok(chats);
+                return NotFound($"User with ID {userId} not found.");
             }
-            catch (Exception ex)
+            var chats = _chatService.SearchChatsByName(userId, chatName);
+            if (chats == null || !chats.Any())
             {
-                return StatusCode(500, new { Error = "An error occurred while searching chats.", Details = ex.Message });
+                return NotFound(new { Message = "No chats found for the given search criteria." });
             }
+            return Ok(chats);
         }
 
 
         [HttpPost("CreateNewChat")]
         public IActionResult CreateChat([FromBody] CreateChatModel newChatModel)
         {
-         
+
             if (!_userService.IsUserExist(newChatModel.CreatorId))
             {
                 return NotFound($"User with ID {newChatModel.CreatorId} not found.");
             }
 
-            try
-            {
-                _chatService.CreateNewChat(newChatModel.CreatorId, newChatModel.Name);
-                return Ok("Chat is created");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = "An error occurred while creating the chat room.", Details = ex.Message });
-            }
+            _chatService.CreateNewChat(newChatModel.CreatorId, newChatModel.Name);
+            return Ok("Chat is created");
+
         }
 
         [HttpPost("AddUsersToChat")]
@@ -83,33 +74,22 @@ namespace SignalRChat.Controllers
                 }
             }
 
-            try
-            {
-                _chatService.AddUsersToChat(model.UsersToAddIds, model.ChatId);
-                return Ok("Users added to chat");
-            }
-            catch (Exception ex) { 
-                return StatusCode(500, new { Error = "An error occurred while adding users to the chat room.", Details = ex.Message }); 
-            }
+            _chatService.AddUsersToChat(model.UsersToAddIds, model.ChatId);
+            return Ok("Users added to chat");
+
         }
 
         [HttpDelete("DeleteChat")]
-        public IActionResult DeleteChat(DeleteChatModel model) {
+        public IActionResult DeleteChat(DeleteChatModel model)
+        {
             if (!_chatService.IsChatExist(model.ChatId))
                 throw new IsNotChatMemberException();
 
             if (!_userService.CheckIsUserCreator(model.CreatorId, model.ChatId))
                 throw new NotCreatorException();
-            try
-            {
-                _chatService.DeleteChat(model.ChatId);
-                return Ok("Chat is deleted");
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = "An error occurred while deleting the chat room.", Details = ex.Message });
-            }
+            _chatService.DeleteChat(model.ChatId);
+            return Ok("Chat is deleted");
         }
     }
 }

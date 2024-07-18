@@ -41,7 +41,7 @@ public class ChatService : IChatService
             }),
             Creator = new UserModel
             {
-                Id=chat.UserCreator.Id,
+                Id = chat.UserCreator.Id,
                 Name = chat.UserCreator.UserName
             },
             Messages = chat.Messages?.Select(message => new MessageModel
@@ -74,7 +74,7 @@ public class ChatService : IChatService
         }
     }
 
-    public void DeleteChat(int chatId) 
+    public void DeleteChat(int chatId)
     {
         var chat = _db.Chats.FirstOrDefault(c => c.Id == chatId);
         _db.Chats.Remove(chat);
@@ -84,5 +84,22 @@ public class ChatService : IChatService
     {
         var chat = _db.Chats.FirstOrDefault(c => c.Id == chatId);
         return chat != null && chat.Id > 0;
+    }
+
+    public void SendMessageToChat(int userId, int chatId, string message)
+    {
+        var chat = _db.Chats.Include(c => c.Messages).FirstOrDefault(c => c.Id == chatId);
+        var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+
+        var newMessage = new Message
+        {
+            UserId = userId,
+            ChatId = chatId,
+            Content = message,
+            CreatingTime = DateTime.Now
+        };
+
+        _db.Messages.Add(newMessage);
+        _db.SaveChanges();
     }
 }

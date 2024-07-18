@@ -1,6 +1,7 @@
 ﻿using DataContext;
 using Domain;
 using Infrastructure.Interfaces;
+using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
@@ -19,13 +20,18 @@ public class UserService : IUserService
 
     public bool IsUserExist(int userId)
     {
-        var user= _db.Users.FirstOrDefault(c => c.Id == userId);
+        var user = _db.Users.FirstOrDefault(c => c.Id == userId);
         return user != null && user.Id > 0;
     }
     public bool IsUserInChat(int userId, int chatId)
     {
         return _db.UsersChats.Any(uc => uc.UserId == userId && uc.ChatId == chatId);
-        
+
+    }
+    public UserModel GetUserById(int userId)
+    {
+        var user = _db.Users.FirstOrDefault(c => c.Id == userId);
+        return new UserModel { Id = user.Id, Name = user.UserName };
     }
 
 }

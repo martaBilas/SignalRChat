@@ -1,10 +1,7 @@
-﻿using ChatTest.Hubs;
-using Domain;
-using Infrastructure.Exceptions;
+﻿using Infrastructure.Exceptions;
 using Infrastructure.Interfaces;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 
 namespace SignalRChat.Controllers
@@ -13,33 +10,14 @@ namespace SignalRChat.Controllers
     [ApiController]
     public class ChatsController : ControllerBase
     {
-        private readonly IHubContext<ChatHub> _hubContext;
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
 
-        public ChatsController(IHubContext<ChatHub> hubContext, IChatService chatService, IUserService userService)
+        public ChatsController( IChatService chatService, IUserService userService)
         {
-            _hubContext = hubContext;
             _chatService = chatService;
             _userService = userService;
         }
-
-        [HttpPost("SendMessage")]
-        public async Task<IActionResult> SendMessage([FromBody] MessageTestModel model)
-        {
-            if (string.IsNullOrEmpty(model.Message))
-            {
-                return BadRequest("Invalid message.");
-            }
-            await _hubContext.Clients.All.SendAsync("ReceiveMessage", model.User, model.Message);
-
-            return Ok();
-        }
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
 
         [HttpGet("SearchChatsByName")]
         public IActionResult SearchChatsByName([FromQuery] int userId, [FromQuery] string chatName)
@@ -63,15 +41,7 @@ namespace SignalRChat.Controllers
         [HttpPost("CreateNewChat")]
         public IActionResult CreateChat([FromBody] CreateChatModel newChatModel)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    var errors = ModelState.Values
-            //        .SelectMany(v => v.Errors)
-            //        .Select(e => e.ErrorMessage)
-            //        .ToList();
-
-            //    return BadRequest(new { Errors = errors });
-            //}
+         
             if (!_userService.IsUserExist(newChatModel.CreatorId))
             {
                 return NotFound($"User with ID {newChatModel.CreatorId} not found.");
@@ -126,7 +96,7 @@ namespace SignalRChat.Controllers
         [HttpDelete("DeleteChat")]
         public IActionResult DeleteChat(DeleteChatModel model) {
             if (!_chatService.IsChatExist(model.ChatId))
-                return NotFound(new { Message = "There is no chat with such id" });
+                throw new IsNotChatMemberException();
 
             if (!_userService.CheckIsUserCreator(model.CreatorId, model.ChatId))
                 throw new NotCreatorException();

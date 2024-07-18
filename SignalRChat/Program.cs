@@ -4,13 +4,13 @@ using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var AllowAll = "_AllowAll";
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    options.AddPolicy(name: AllowAll,
                       policy =>
                       {
                           policy.WithOrigins("https://localhost:7010")
@@ -44,7 +44,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(AllowAll);
 app.UseAuthorization();
 
 

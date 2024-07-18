@@ -1,5 +1,4 @@
-﻿using Domain;
-using Infrastructure.Models;
+﻿using Infrastructure.Models;
 
 namespace Infrastructure.Interfaces
 {
@@ -9,5 +8,6 @@ namespace Infrastructure.Interfaces
         void CreateNewChat(int creatorId, string roomName);
         bool IsChatExist(int chatId);
         IList<ChatModel> SearchChatsByName(int userId, string searchTerm);
+        void SendMessageToChat(int userId, int chatId, string message);
     }
 }

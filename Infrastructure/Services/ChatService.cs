@@ -78,6 +78,7 @@ public class ChatService : IChatService
     {
         var chat = _db.Chats.FirstOrDefault(c => c.Id == chatId);
         _db.Chats.Remove(chat);
+        _db.SaveChanges();
     }
 
     public bool IsChatExist(int chatId)

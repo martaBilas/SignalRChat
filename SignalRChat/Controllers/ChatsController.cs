@@ -102,6 +102,7 @@ namespace SignalRChat.Controllers
                 throw new NotCreatorException();
             try
             {
+                _chatService.DeleteChat(model.ChatId);
                 return Ok("Chat is deleted");
 
             }

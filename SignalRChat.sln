@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalRChat", "SignalRChat\SignalRChat.csproj", "{5F10DC58-B156-429A-9333-59A5F053D40D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalRChat", "SignalRChat\SignalRChat.csproj", "{5F10DC58-B156-429A-9333-59A5F053D40D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{E94FB5DB-B0BB-46E9-BF10-4448159EF4FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{E94FB5DB-B0BB-46E9-BF10-4448159EF4FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{685494E5-00D4-4CC2-914C-56957BAD1F9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{685494E5-00D4-4CC2-914C-56957BAD1F9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataContext", "DataContext\DataContext.csproj", "{74FD9BBC-421E-4B6A-A4BE-8F1F943FE040}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient", "TestClient\TestClient.csproj", "{91BE3B6E-8915-4C92-9A71-8DF5472D1A54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataContext", "DataContext\DataContext.csproj", "{74FD9BBC-421E-4B6A-A4BE-8F1F943FE040}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +33,6 @@ Global
 		{74FD9BBC-421E-4B6A-A4BE-8F1F943FE040}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74FD9BBC-421E-4B6A-A4BE-8F1F943FE040}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74FD9BBC-421E-4B6A-A4BE-8F1F943FE040}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91BE3B6E-8915-4C92-9A71-8DF5472D1A54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91BE3B6E-8915-4C92-9A71-8DF5472D1A54}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91BE3B6E-8915-4C92-9A71-8DF5472D1A54}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91BE3B6E-8915-4C92-9A71-8DF5472D1A54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

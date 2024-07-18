@@ -4,22 +4,9 @@ using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
-var AllowAll = "_AllowAll";
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: AllowAll,
-                      policy =>
-                      {
-                          policy.WithOrigins("https://localhost:7010")
-                                .AllowAnyHeader()
-                                .AllowAnyMethod()
-                                .AllowCredentials();
-                      });
-});
-
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -1,11 +1,12 @@
 using ChatTest.Hubs;
 using DataContext;
+using Infrastructure.Interfaces;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<ChatDataContext>(options =>
         connectionString,
         b => b.MigrationsAssembly("DataContext")));
 
+builder.Services.AddScoped<IChatService,ChatService>();
+builder.Services.AddScoped<IUserService,UserService>();
 
 var app = builder.Build();
 
@@ -28,10 +31,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors(AllowAll);
 app.UseAuthorization();
 
+
 app.MapControllers();
-app.MapHub<ChatHub>("/Chat");
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

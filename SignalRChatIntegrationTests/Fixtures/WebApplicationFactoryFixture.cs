@@ -6,16 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Xunit;
 
 namespace ChatIntegrationTests.Fixtures;
 
-public class WebApplicationFactoryFixture : IAsyncLifetime
+public class WebApplicationFactoryFixture : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly WebApplicationFactory<Program> _factory;
-    private string _connectionString = "Server=DESKTOP-UJ9A1E3;Database=ChatTestIntegration;User Id=sa;Password=marta16bilas;Integrated Security=true;TrustServerCertificate=True;";
- 
+    
     private readonly int InitialUserCount = 2;
     private readonly int InitialChatCount = 2;
 
@@ -29,7 +27,7 @@ public class WebApplicationFactoryFixture : IAsyncLifetime
                 services.AddDbContext<ChatDataContext>(options =>
                 {
                     var serviceProvider = services.BuildServiceProvider();
-                    string connectionString = serviceProvider.GetRequiredService<IConfiguration>().GetConnectionString(_connectionString);
+                    string connectionString = serviceProvider.GetRequiredService<IConfiguration>().GetConnectionString("IntegrationTestConnection");
                     options.UseSqlServer(connectionString);
                 });
             });
@@ -51,12 +49,13 @@ public class WebApplicationFactoryFixture : IAsyncLifetime
             await dbContext.Chats.AddRangeAsync(ChatFixture.GetChats(InitialChatCount));
             await dbContext.SaveChangesAsync();
 
-            foreach (var chat in dbContext.Chats)
+            for (int i = 0; i < InitialChatCount; i++)
             {
-                foreach (var user in chat.Users)
+                for (int j = 0; j < InitialUserCount; j++)
                 {
-                    await dbContext.UsersChats.AddAsync(new UserChat { ChatId = chat.Id, UserId = user.Id });
+                    await dbContext.UsersChats.AddAsync(new UserChat { ChatId = i, UserId = j });
                 }
+
             }
         }
     }

@@ -23,6 +23,7 @@ public class ChatFixture
             .RuleFor(t => t.Id, _ => 0)
             .RuleFor(t => t.Name, (faker) => faker.Name.FirstName())
             .RuleFor(t => t.UserCreatorId, _ => 1)
+            //.RuleFor(t => t.Users, _ => new List<User> { new User { Id = 1, UserName = "Random" } })
             .UseSeed(seed);
     }
 }
